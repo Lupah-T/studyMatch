@@ -39,7 +39,9 @@ const SeedData={
     {id:'s2',title:'SQL Practice Session',groupId:'g2',unit:'Database Systems',date:future(4,18,30).toISOString().slice(0,10),start:'18:30',end:'20:00',mode:'Online',location:'Google Meet link shared in group',description:'Joins and normalisation exercises.',creatorId:'u3',status:'scheduled'},
     {id:'s3',title:'Sprint Planning',groupId:'g3',unit:'Software Engineering',date:future(-2,14,0).toISOString().slice(0,10),start:'14:00',end:'16:00',mode:'Physical',location:'Engineering Block F-4',description:'Past planning session.',creatorId:'u5',status:'scheduled'}
    ];
-   Storage.set('users',users);Storage.set('profiles',profiles);Storage.set('groups',groups);Storage.set('sessions',sessions);Storage.set('invitations',[]);Storage.set('notifications',[]);Storage.set('activity',[
+   profiles.forEach((p,index)=>{p.contactMethods=p.contactMethods||['email','chat'];p.phone=p.phone||'+254700000'+String(index+10).padStart(2,'0');p.contactEmail=p.contactEmail||`${p.userId}@mut.ac.ke`});
+   groups.forEach(g=>{g.access=g.access||'public';g.communication=g.communication||'chat';g.whatsappLink=g.whatsappLink||'';g.requests=g.requests||[]});
+   Storage.set('users',users);Storage.set('profiles',profiles);Storage.set('groups',groups);Storage.set('sessions',sessions);Storage.set('invitations',[]);Storage.set('notifications',[]);Storage.set('messages',[]);Storage.set('groupMessages',[]);Storage.set('activity',[
     {text:'Data Structures Sprint welcomed two new members',time:'Today, 09:30'},
     {text:'Database Systems Lab scheduled a new session',time:'Yesterday, 17:10'},
     {text:'Five students updated their study profiles',time:'Nov 20'}

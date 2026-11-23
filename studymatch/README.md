@@ -43,16 +43,16 @@ The SPA has separate modules:
 - `app.js`: navigation and UI rendering
 
 ## Matching algorithm
-For two complete profiles:
+StudyMatch uses the exact profile-based formula:
 
-- Shared units: `intersection units / max(unit counts) × 45%`
-- Availability: `intersection times / max(time counts) × 30%`
-- Study mode: 100% equal, 85% if one mode is Both, otherwise 20%, weighted 15%
-- Academic goals: `intersection goals / max(goal counts) × 10%`
+`Compatibility Score = (U × 0.45) + (T × 0.30) + (M × 0.15) + (G × 0.10)`
 
-Final score = units score × 0.45 + availability × 0.30 + mode × 0.15 + goals × 0.10.
+- **U — Academic unit similarity:** Jaccard similarity = `|A ∩ B| / |A ∪ B| × 100`, using normalized, unique, case-insensitive unit names. Empty unit sets score 0.
+- **T — Schedule compatibility:** Jaccard similarity = `|A ∩ B| / |A ∪ B| × 100` for availability periods. Empty availability scores 0.
+- **M — Study mode compatibility:** 100% for equal Physical/Physical or Online/Online preferences, 100% for Physical/Both or Online/Both in either direction, and 100% for Both/Both. Physical/Online is 0%.
+- **G — Academic goal compatibility:** Jaccard similarity across multiple normalized goals. Identical single goals score 100%; different goals score 0%; empty goals score 0.
 
-The current student and incomplete profiles are excluded. Results are sorted from highest to lowest. Every factor is calculated directly from saved profile data; no random scores are used.
+Missing study mode or academic goal data is not treated as a successful match. Incomplete profiles are excluded from recommendations. Results use one score source for both dashboard and recommendation views, sorted by descending Compatibility Score and then student name alphabetically. No random or hardcoded recommendation scores are used.
 
 ## Project structure
 
@@ -135,3 +135,31 @@ Any newly registered account can also use a password of at least eight character
 - Group invitations and role permissions
 - Exportable calendar integration
 - Unit and end-to-end automated test suites
+
+## Post-Acceptance Communication
+
+After a study invitation is accepted, both students can use **Connections**. Pending, rejected and disconnected invitations do not grant contact access.
+
+- Students select WhatsApp, phone call, email and/or in-platform chat in their profile.
+- External actions use the recipient's saved phone number or contact email only.
+- WhatsApp uses `https://wa.me/`, calls use `tel:`, and email uses `mailto:`.
+- Private conversations are persisted in LocalStorage and show sender identity, timestamps and unread messages.
+- Disconnecting revokes chat and external contact access.
+- The recipient's current preferences always determine the available actions.
+
+This frontend-only chat is not real-time, is browser-local and does not synchronize securely across devices.
+
+## Study group permissions and communication
+- Creators can choose public joining or approval-required membership.
+- Join requests, approvals and rejections persist in LocalStorage.
+- Pending and rejected applicants cannot access group chat.
+- Approved members can access StudyMatch chat only or WhatsApp plus chat according to creator settings.
+- WhatsApp-only groups expose only a validated invitation link and do not provide the platform chatroom.
+- Creator and administrator controls include editing, capacity, access, communication, member removal and deletion.
+- Group chat uses browser-only storage; leave, remove and delete actions revoke UI access.
+
+## Find Partners navigation
+The Find Partners item uses a custom combined magnifying-glass and graduation-cap SVG.
+
+## Prototype communication limitations
+Chats are frontend demonstrations stored in LocalStorage. They do not provide real-time multi-device synchronization or production authorization. Backend APIs and server-side storage are required for deployment.
